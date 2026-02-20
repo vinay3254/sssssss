@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EmailJS OTP Form</title>
+    <style>
+        .field {
+            margin-bottom: 10px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 12px;
+            color: #777;
+        }
+
+        .field input {
+            display: block;
+            min-width: 250px;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        input[type="submit"] {
+            display: block;
+            padding: 6px 30px;
+            font-size: 14px;
+            background-color: #4460AA;
+            color: #fff;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>Send OTP Email</h2>
+    
+    <form id="form">
+        <div class="field">
+            <label for="otp_code">otp_code</label>
+            <input type="text" name="otp_code" id="otp_code">
+        </div>
+        <div class="field">
+            <label for="passcode">passcode</label>
+            <input type="text" name="passcode" id="passcode">
+        </div>
+        <div class="field">
+            <label for="time">time</label>
+            <input type="text" name="time" id="time">
+        </div>
+        <div class="field">
+            <label for="email">email</label>
+            <input type="text" name="email" id="email">
+        </div>
+
+        <input type="submit" id="button" value="Send Email">
+    </form>
+
+    <div id="result"></div>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <script type="text/javascript">
+        emailjs.init('iI4-mXaE0Rj9WFTdz');
+
+        // Auto-generate OTP when page loads
+        window.onload = function() {
+            const otp = Math.floor(100000 + Math.random() * 900000);
+            const expiryTime = new Date(Date.now() + 15 * 60 * 1000).toLocaleTimeString();
+            
+            document.getElementById('otp_code').value = otp;
+            document.getElementById('passcode').value = otp;
+            document.getElementById('time').value = expiryTime;
+        };
+
+        document.getElementById('form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const btn = document.getElementById('button');
+            btn.value = 'Sending...';
+
+            emailjs.send('service_ao72eif', 'template_38dxrg1', {
+                email: document.getElementById('email').value,
+                otp_code: document.getElementById('otp_code').value,
+                passcode: document.getElementById('passcode').value,
+                time: document.getElementById('time').value
+            })
+                .then(() => {
+                    btn.value = 'Send Email';
+                    alert('Sent!');
+                }, (err) => {
+                    btn.value = 'Send Email';
+                    alert(JSON.stringify(err));
+                });
+        });
+    </script>
+</body>
+</html>

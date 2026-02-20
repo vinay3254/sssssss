@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OTP Test</title>
+</head>
+<body>
+    <h2>OTP Test Page</h2>
+    
+    <input type="email" id="email" placeholder="Enter your email" required />
+    <button onclick="sendOTP()">Send OTP</button>
+
+    <br /><br />
+
+    <input type="text" id="otp" placeholder="Enter OTP" />
+    <button onclick="verifyOTP()">Verify OTP</button>
+
+    <div id="result"></div>
+
+    <script>
+        async function sendOTP() {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                alert('Please enter email');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password: 'test123' })
+                });
+                
+                const data = await response.json();
+                document.getElementById('result').innerHTML = `<p>${data.message}</p>`;
+                
+                if (data.requiresOTP) {
+                    alert('OTP sent! Check server console for code.');
+                }
+            } catch (error) {
+                document.getElementById('result').innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+
+        async function verifyOTP() {
+            const email = document.getElementById('email').value;
+            const otp = document.getElementById('otp').value;
+            
+            if (!email || !otp) {
+                alert('Please enter both email and OTP');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/verify-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, otp })
+                });
+                
+                const data = await response.json();
+                document.getElementById('result').innerHTML = `<p>${data.message}</p>`;
+                
+                if (data.token) {
+                    alert('Login successful!');
+                }
+            } catch (error) {
+                document.getElementById('result').innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

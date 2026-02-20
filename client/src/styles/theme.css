@@ -1,0 +1,484 @@
+/* Custom Theme Colors */
+:root {
+  --primary-bg: #ffffff;
+  --primary-text: #000000;
+  --secondary-text: #6B7280;
+  --card-bg: #F9FAFB;
+  --border-color: #E5E7EB;
+  --hover-bg: #F3F4F6;
+}
+
+/* Dark mode specific variables - Black & Gold theme */
+.dark {
+  --primary-bg: var(--primary-dark, #1B1A17);
+  --primary-text: var(--accent-gold, #F0A500);
+  --secondary-bg: #000000;
+  --text-primary: var(--text-light, #FFFFFF);
+  --text-secondary: #E5E7EB;
+  --border-dark: #374151;
+  --accent-bg: rgba(240, 165, 0, 0.1);
+}
+
+/* Global theme overrides */
+.theme-bg {
+  background-color: var(--primary-bg);
+}
+
+.theme-text {
+  color: var(--primary-text);
+}
+
+.theme-text-secondary {
+  color: var(--secondary-text);
+}
+
+.theme-card {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+.theme-button-primary {
+  background-color: var(--primary-text);
+  color: var(--primary-bg);
+}
+
+.theme-button-primary:hover {
+  opacity: 0.9;
+}
+
+.theme-button-secondary {
+  background-color: var(--card-bg);
+  color: var(--secondary-text);
+  border-color: var(--border-color);
+}
+
+.theme-button-secondary:hover {
+  background-color: var(--hover-bg);
+}
+
+.theme-input {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--secondary-text);
+}
+
+.theme-input:focus {
+  border-color: var(--primary-text);
+  box-shadow: 0 0 0 2px rgba(240, 165, 0, 0.2);
+}
+
+/* Editor Wrapper Scroll Styles */
+.editor-wrapper {
+  height: calc(100vh - 80px);
+  overflow-y: scroll;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+.editor-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.editor-wrapper::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+}
+
+.editor-wrapper::-webkit-scrollbar-track {
+  background: #f2f2f2;
+}
+
+.editor-wrapper::-webkit-scrollbar-thumb {
+  background: #bfbfbf;
+}
+
+.dark .editor-wrapper::-webkit-scrollbar-track {
+  background: #2e2e2e;
+}
+
+.dark .editor-wrapper::-webkit-scrollbar-thumb {
+  background: #444;
+}
+
+/* Sidebar Scroll Styles */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.sidebar .overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar .overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #bfbfbf;
+  border-radius: 3px;
+}
+
+.sidebar .overflow-y-auto::-webkit-scrollbar-track {
+  background: #f2f2f2;
+}
+
+.dark .sidebar .overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #F0A500;
+}
+
+.dark .sidebar .overflow-y-auto::-webkit-scrollbar-track {
+  background: rgba(240, 165, 0, 0.1);
+}
+
+/* Dashboard dark theme overrides - Black & Gold */
+.dark .bg-white {
+  background-color: var(--primary-dark) !important;
+}
+
+.dark .bg-gray-50 {
+  background-color: var(--primary-dark) !important;
+}
+
+.dark .bg-gray-100 {
+  background-color: rgba(27, 26, 23, 0.8) !important;
+}
+
+.dark .bg-gray-800 {
+  background-color: var(--primary-dark) !important;
+}
+
+.dark .bg-neutral-50 {
+  background-color: var(--primary-dark) !important;
+}
+
+.dark .bg-neutral-900 {
+  background-color: #000000 !important;
+}
+
+.dark .text-gray-900 {
+  color: var(--text-light) !important;
+}
+
+.dark .text-gray-700 {
+  color: var(--text-light) !important;
+}
+
+.dark .text-gray-600 {
+  color: #E5E7EB !important;
+}
+
+.dark .text-gray-500 {
+  color: #9CA3AF !important;
+}
+
+.dark .text-neutral-700 {
+  color: var(--text-light) !important;
+}
+
+.dark .text-neutral-300 {
+  color: var(--text-light) !important;
+}
+
+.dark .border-gray-200 {
+  border-color: var(--accent-gold) !important;
+}
+
+.dark .border-gray-300 {
+  border-color: rgba(240, 165, 0, 0.3) !important;
+}
+
+.dark .border-gray-600 {
+  border-color: var(--accent-gold) !important;
+}
+
+.dark .border-neutral-200 {
+  border-color: var(--accent-gold) !important;
+}
+
+.dark .border-neutral-800 {
+  border-color: rgba(240, 165, 0, 0.5) !important;
+}
+
+/* Input and form elements */
+.dark input, .dark textarea, .dark select {
+  background-color: var(--primary-dark) !important;
+  color: var(--text-light) !important;
+  border-color: var(--accent-gold) !important;
+}
+
+.dark input::placeholder, .dark textarea::placeholder {
+  color: rgba(240, 165, 0, 0.6) !important;
+}
+
+/* Hover states */
+.dark .hover\:bg-gray-100:hover {
+  background-color: rgba(240, 165, 0, 0.1) !important;
+}
+
+.dark .hover\:bg-gray-200:hover {
+  background-color: rgba(240, 165, 0, 0.15) !important;
+}
+
+.dark .hover\:bg-neutral-100:hover {
+  background-color: rgba(240, 165, 0, 0.1) !important;
+}
+
+/* Ribbon and menu specific overrides */
+.dark .bg-gray-50 {
+  background-color: var(--primary-dark) !important;
+}
+
+.dark .bg-gray-100 {
+  background-color: rgba(27, 26, 23, 0.9) !important;
+}
+
+.dark .bg-gray-800 {
+  background-color: var(--primary-dark) !important;
+}
+
+.dark .bg-neutral-900 {
+  background-color: #000000 !important;
+}
+
+.dark .text-neutral-700 {
+  color: var(--text-light) !important;
+}
+
+.dark .text-neutral-300 {
+  color: var(--text-light) !important;
+}
+
+.dark .border-neutral-200 {
+  border-color: var(--accent-gold) !important;
+}
+
+.dark .border-neutral-800 {
+  border-color: rgba(240, 165, 0, 0.5) !important;
+}
+
+/* Button and interactive elements */
+.dark button {
+  background-color: var(--primary-dark) !important;
+  color: var(--text-light) !important;
+  border-color: var(--accent-gold) !important;
+}
+
+.dark button:hover {
+  background-color: rgba(240, 165, 0, 0.1) !important;
+}
+
+/* Specific overrides for dropdown menus and panels */
+.dark .dropdown-menu {
+  background-color: var(--primary-dark) !important;
+  border-color: var(--accent-gold) !important;
+}
+
+.dark .panel {
+  background-color: var(--primary-dark) !important;
+  border-color: var(--accent-gold) !important;
+}
+
+.dark .modal {
+  background-color: var(--primary-dark) !important;
+  border-color: var(--accent-gold) !important;
+}
+
+/* Additional border style fixes for dark mode */
+.dark .border-dashed {
+  border-style: dashed !important;
+}
+
+.dark .border-solid {
+  border-style: solid !important;
+}
+
+.dark .border-2 {
+  border-width: 2px !important;
+}
+
+.dark .border-l {
+  border-left-width: 1px !important;
+}
+
+.dark .border-r {
+  border-right-width: 1px !important;
+}
+
+.dark .border-t {
+  border-top-width: 1px !important;
+}
+
+.dark .border-b {
+  border-bottom-width: 1px !important;
+}
+
+.dark .hover\:bg-gray-100:hover {
+  background-color: #1f2937 !important;
+}
+
+.dark .hover\:bg-gray-50:hover {
+  background-color: #111827 !important;
+}
+
+/* Animation Keyframes */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-200px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(200px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from { transform: translateY(-200px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInDown {
+  from { transform: translateY(200px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.3); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-30px); }
+  60% { transform: translateY(-15px); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Animation Classes */
+.animate-fadeIn {
+  animation: fadeIn var(--animation-duration, 1s) ease-out forwards;
+  animation-delay: var(--animation-delay, 0s);
+}
+
+.animate-slideInLeft {
+  animation: slideInLeft var(--animation-duration, 1s) ease-out forwards;
+  animation-delay: var(--animation-delay, 0s);
+}
+
+.animate-slideInRight {
+  animation: slideInRight var(--animation-duration, 1s) ease-out forwards;
+  animation-delay: var(--animation-delay, 0s);
+}
+
+.animate-slideInUp {
+  animation: slideInUp var(--animation-duration, 1s) ease-out forwards;
+  animation-delay: var(--animation-delay, 0s);
+}
+
+.animate-slideInDown {
+  animation: slideInDown var(--animation-duration, 1s) ease-out forwards;
+  animation-delay: var(--animation-delay, 0s);
+}
+
+.animate-zoomIn {
+  animation: zoomIn var(--animation-duration, 1s) ease-out forwards;
+  animation-delay: var(--animation-delay, 0s);
+}
+
+.animate-bounce {
+  animation: bounce var(--animation-duration, 1s) ease-out forwards;
+  animation-delay: var(--animation-delay, 0s);
+}
+
+.animate-pulse {
+  animation: pulse var(--animation-duration, 1s) ease-out forwards;
+  animation-delay: var(--animation-delay, 0s);
+}
+
+.animate-float {
+  animation: float var(--animation-duration, 1s) ease-out forwards;
+  animation-delay: var(--animation-delay, 0s);
+}
+
+.animate-rotate {
+  animation: rotate var(--animation-duration, 1s) ease-out forwards;
+  animation-delay: var(--animation-delay, 0s);
+}
+
+/* Image Editor Styles */
+.image-editor-handle {
+  width: 8px;
+  height: 8px;
+  background: #3b82f6;
+  border: 1px solid #ffffff;
+  border-radius: 50%;
+  position: absolute;
+}
+
+.image-editor-handle:hover {
+  background: #2563eb;
+}
+
+.crop-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.crop-area {
+  border: 2px dashed #ffffff;
+  background: transparent;
+  position: absolute;
+  cursor: move;
+}
+
+.crop-handle {
+  width: 6px;
+  height: 6px;
+  background: #ffffff;
+  border: 1px solid #666;
+  position: absolute;
+}
+
+.crop-handle.nw { top: -3px; left: -3px; cursor: nw-resize; }
+.crop-handle.ne { top: -3px; right: -3px; cursor: ne-resize; }
+.crop-handle.sw { bottom: -3px; left: -3px; cursor: sw-resize; }
+.crop-handle.se { bottom: -3px; right: -3px; cursor: se-resize; }
+
+/* Table Editor Styles */
+.ppt-table {
+  border-collapse: collapse;
+  border: 2px solid #444;
+  cursor: move;
+  position: absolute;
+  resize: both;
+  overflow: auto;
+}
+
+.ppt-table td {
+  border: 1px solid #666;
+  width: 90px;
+  height: 40px;
+  padding: 5px;
+  text-align: center;
+}

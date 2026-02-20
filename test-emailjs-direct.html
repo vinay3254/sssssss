@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EmailJS Test</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</head>
+<body>
+    <h1>EmailJS Direct Test</h1>
+    <button onclick="testEmail()">Send Test Email</button>
+    <div id="result"></div>
+
+    <script>
+        // Initialize EmailJS
+        emailjs.init('TYkpV87eFwcA3xSTa');
+
+        function testEmail() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Sending...';
+
+            const otp = Math.floor(100000 + Math.random() * 900000).toString();
+            
+            emailjs.send(
+                'service_g6goawj',
+                'template_an3sfqk',
+                {
+                    email: 'bussyatwork@gmail.com',
+                    otp_code: otp,
+                    from_name: 'EtherXPPT'
+                }
+            ).then(function(response) {
+                console.log('SUCCESS!', response);
+                resultDiv.innerHTML = `✅ Email sent successfully! OTP: ${otp}<br>Status: ${response.status}<br>Check your inbox!`;
+            }, function(error) {
+                console.error('FAILED...', error);
+                resultDiv.innerHTML = `❌ Failed: ${error.text || error.message}<br>OTP was: ${otp}`;
+            });
+        }
+    </script>
+</body>
+</html>

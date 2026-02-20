@@ -1,0 +1,107 @@
+﻿  const handleListChange = (listType) => {
+    setSelectedList(listType);
+    setShowListDropdown(false);
+
+    if (!savedSelection) return;
+
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(savedSelection);
+
+    let editableElement = savedSelection.startContainer;
+    while (editableElement && editableElement.nodeType !== Node.ELEMENT_NODE) {
+      editableElement = editableElement.parentElement;
+    }
+
+    while (editableElement && editableElement.contentEditable !== 'true') {
+      editableElement = editableElement.parentElement;
+    }
+
+    if (!editableElement) return;
+
+    editableElement.focus();
+    selection.removeAllRanges();
+    selection.addRange(savedSelection);
+
+    // Remove existing lists first
+    const existingLists = editableElement.querySelectorAll('ul, ol');
+    existingLists.forEach(list => {
+      const items = Array.from(list.querySelectorAll('li'));
+      items.forEach(item => {
+        const text = item.textContent.replace(/^[â€¢â˜…â†’]\s*/, '');
+        const textNode = document.createTextNode(text + '\n');
+        list.parentNode.insertBefore(textNode, list);
+      });
+      list.remove();
+    });
+
+    // Reselect after cleanup
+    selection.removeAllRanges();
+    selection.addRange(savedSelection);
+
+    switch(listType) {
+      case 'bullet':
+        document.execCommand('insertUnorderedList', false, null);
+        setTimeout(() => {
+          const lists = editableElement.querySelectorAll('ul');
+          lists.forEach(list => {
+            list.style.paddingLeft = '30px';
+            list.style.marginLeft = '0';
+          });
+        }, 10);
+        break;
+      case 'numeric':
+        document.execCommand('insertOrderedList', false, null);
+        setTimeout(() => {
+          const lists = editableElement.querySelectorAll('ol');
+          lists.forEach(list => {
+            list.style.paddingLeft = '30px';
+            list.style.marginLeft = '0';
+          });
+        }, 10);
+        break;
+      case 'alphabetic':
+        document.execCommand('insertOrderedList', false, null);
+        setTimeout(() => {
+          const lists = editableElement.querySelectorAll('ol');
+          lists.forEach(list => {
+            list.style.listStyleType = 'upper-alpha';
+            list.style.paddingLeft = '30px';
+            list.style.marginLeft = '0';
+          });
+        }, 10);
+        break;
+      case 'stars':
+        document.execCommand('insertUnorderedList', false, null);
+        setTimeout(() => {
+          const lists = editableElement.querySelectorAll('ul');
+          lists.forEach(list => {
+            list.style.listStyleType = 'none';
+            list.style.paddingLeft = '0';
+            list.style.marginLeft = '0';
+            list.querySelectorAll('li').forEach(item => {
+              const text = item.textContent.replace(/^[â€¢â˜…â†’]\s*/, '');
+              item.textContent = 'â˜… ' + text;
+              item.style.paddingLeft = '0';
+            });
+          });
+        }, 10);
+        break;
+      case 'arrows':
+        document.execCommand('insertUnorderedList', false, null);
+        setTimeout(() => {
+          const lists = editableElement.querySelectorAll('ul');
+          lists.forEach(list => {
+            list.style.listStyleType = 'none';
+            list.style.paddingLeft = '0';
+            list.style.marginLeft = '0';
+            list.querySelectorAll('li').forEach(item => {
+              const text = item.textContent.replace(/^[â€¢â˜…â†’]\s*/, '');
+              item.textContent = 'â†’ ' + text;
+              item.style.paddingLeft = '0';
+            });
+          });
+        }, 10);
+        break;
+    }
+  }

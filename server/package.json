@@ -1,0 +1,31 @@
+{
+  "name": "etherxppt-server",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node simple-server.js",
+    "dev": "nodemon simple-server.js",
+    "direct": "node src/server.js",
+    "test-ipfs": "node test-ipfs.js"
+  },
+  "dependencies": {
+    "axios": "^1.13.4",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.1",
+    "express-rate-limit": "^6.11.2",
+    "form-data": "^4.0.5",
+    "helmet": "^7.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^9.2.1",
+    "multer": "^2.0.2",
+    "node-fetch": "^3.3.2",
+    "nodemailer": "^6.9.15",
+    "nodeman": "^1.1.2",
+    "socket.io": "^4.7.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

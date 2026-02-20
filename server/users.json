@@ -1,0 +1,16 @@
+[
+  {
+    "id": "1771336673915",
+    "name": "vinay gk",
+    "email": "vinaygk219@gmail.com",
+    "password": "$2a$12$3uJ3XZ/hwgQEbhJKJZk7wusUr9Of11/zODqhJkIxGRj0.GANABgnW",
+    "createdAt": "2026-02-17T13:57:53.915Z"
+  },
+  {
+    "id": "1771578514722",
+    "name": "nithin sai",
+    "email": "bussyatwork@gmail.com",
+    "password": "$2a$12$e7sb0XnS/HR3uMLDS6Z9pODQKSQtu885LKozauJgjuhZJGilcfY7K",
+    "createdAt": "2026-02-20T09:08:34.722Z"
+  }
+]

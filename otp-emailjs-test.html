@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OTP Test with EmailJS</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</head>
+<body>
+    <h2>OTP Test Page</h2>
+    
+    <input type="email" id="email" placeholder="Enter your email" required />
+    <button onclick="sendOTP()">Send OTP</button>
+
+    <br /><br />
+
+    <input type="text" id="otp" placeholder="Enter OTP" />
+    <button onclick="verifyOTP()">Verify OTP</button>
+
+    <div id="result"></div>
+
+    <script>
+        // Initialize EmailJS
+        emailjs.init("YOUR_PUBLIC_KEY"); // 🔴 replace with your EmailJS public key
+
+        let generatedOTP;
+        let otpExpiryTime;
+
+        function generateOTP() {
+            return Math.floor(100000 + Math.random() * 900000);
+        }
+
+        function sendOTP() {
+            const email = document.getElementById("email").value;
+
+            if (!email) {
+                alert("Please enter email");
+                return;
+            }
+
+            generatedOTP = generateOTP();
+            otpExpiryTime = Date.now() + 15 * 60 * 1000; // 15 minutes
+
+            const expiryTime = new Date(otpExpiryTime).toLocaleTimeString();
+
+            const templateParams = {
+                email: email,
+                otp_code: generatedOTP,   // matches {{otp_code}}
+                passcode: generatedOTP,   // matches {{passcode}}
+                time: expiryTime          // matches {{time}}
+            };
+
+            emailjs
+                .send(
+                    "YOUR_SERVICE_ID",   // 🔴 replace
+                    "YOUR_TEMPLATE_ID",  // 🔴 replace
+                    templateParams
+                )
+                .then(() => {
+                    alert("OTP sent to your email 📩");
+                    document.getElementById("result").innerHTML = `<p>OTP sent to ${email}</p>`;
+                })
+                .catch((error) => {
+                    console.error("EmailJS Error:", error);
+                    alert("Failed to send OTP");
+                    document.getElementById("result").innerHTML = `<p>Error: ${error.text}</p>`;
+                });
+        }
+
+        function verifyOTP() {
+            const userOTP = document.getElementById("otp").value;
+
+            if (!userOTP) {
+                alert("Enter OTP");
+                return;
+            }
+
+            if (Date.now() > otpExpiryTime) {
+                alert("OTP expired ❌");
+                document.getElementById("result").innerHTML = `<p style="color: red;">OTP expired</p>`;
+                return;
+            }
+
+            if (userOTP == generatedOTP) {
+                alert("OTP Verified Successfully ✅");
+                document.getElementById("result").innerHTML = `<p style="color: green;">OTP Verified Successfully!</p>`;
+            } else {
+                alert("Invalid OTP ❌");
+                document.getElementById("result").innerHTML = `<p style="color: red;">Invalid OTP</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

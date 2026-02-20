@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Email OTP Verification</title>
+
+  <!-- EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function () {
+      emailjs.init("--NpbF0cNKxY7V5zU"); // your public key
+    })();
+  </script>
+</head>
+
+<body style="font-family: Arial; padding: 40px;">
+
+  <h2>Email OTP Verification</h2>
+
+  <input type="email" id="email" placeholder="Enter your email" required />
+  <button onclick="sendOTP()">Send OTP</button>
+
+  <br><br>
+
+  <input type="text" id="otp" placeholder="Enter OTP" />
+  <button onclick="verifyOTP()">Verify OTP</button>
+
+  <script>
+    let generatedOTP;
+    let otpExpiryTime;
+
+    function generateOTP() {
+      return Math.floor(100000 + Math.random() * 900000);
+    }
+
+    function sendOTP() {
+      const email = document.getElementById("email").value;
+
+      if (!email) {
+        alert("Please enter email");
+        return;
+      }
+
+      generatedOTP = generateOTP();
+      otpExpiryTime = Date.now() + 15 * 60 * 1000; // 15 minutes expiry
+
+      const templateParams = {
+        email: email,
+        otp_code: generatedOTP,
+        passcode: generatedOTP,
+        time: "15 minutes"
+      };
+
+      emailjs.send(
+        "service_zmo1m6e",
+        "template_3d90j8f",
+        templateParams
+      )
+      .then(() => {
+        alert("OTP sent to your email 📩");
+      })
+      .catch((error) => {
+        console.error(error);
+        alert("Failed to send OTP");
+      });
+    }
+
+    function verifyOTP() {
+      const userOTP = document.getElementById("otp").value;
+
+      if (!userOTP) {
+        alert("Enter OTP");
+        return;
+      }
+
+      if (Date.now() > otpExpiryTime) {
+        alert("OTP expired ❌");
+        return;
+      }
+
+      if (userOTP == generatedOTP) {
+        alert("OTP Verified Successfully ✅");
+      } else {
+        alert("Invalid OTP ❌");
+      }
+    }
+  </script>
+
+</body>
+</html>

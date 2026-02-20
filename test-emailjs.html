@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EmailJS Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+<body>
+    <h2>Test EmailJS</h2>
+    <input type="email" id="email" placeholder="Your email" />
+    <button onclick="testEmail()">Send Test OTP</button>
+    <div id="result"></div>
+
+    <script>
+        emailjs.init('--NpbF0cNKxY7V5zU');
+
+        async function testEmail() {
+            const email = document.getElementById('email').value;
+            const otp = Math.floor(100000 + Math.random() * 900000);
+            
+            try {
+                const result = await emailjs.send('service_zmo1m6e', 'template_3d90j8f', {
+                    to_email: email,
+                    user_email: email,
+                    email: email,
+                    otp_code: otp,
+                    passcode: otp,
+                    time: new Date().toLocaleTimeString()
+                });
+                
+                document.getElementById('result').innerHTML = `<p style="color: green;">Success! OTP sent to your email.</p>`;
+                console.log('Success:', result);
+            } catch (error) {
+                document.getElementById('result').innerHTML = `<p style="color: red;">Error: ${error.text}</p>`;
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+</html>

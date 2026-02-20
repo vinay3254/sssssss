@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Complete OTP System</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <style>
+        body { font-family: Arial; padding: 40px; background: #f5f5f5; }
+        .container { max-width: 400px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #0056b3; }
+        .status { margin: 15px 0; padding: 10px; border-radius: 5px; text-align: center; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .logo { text-align: center; margin-bottom: 10px; }
+        .logo img { width: 80px; height: 80px; }
+        .brand { text-align: center; margin-bottom: 20px; }
+        .brand svg { width: 200px; height: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L4 6V11C4 16.55 7.84 21.74 12 23C16.16 21.74 20 16.55 20 11V6L12 2Z" fill="#007bff"/>
+                <path d="M10 17L6 13L7.41 11.59L10 14.17L16.59 7.58L18 9L10 17Z" fill="white"/>
+            </svg>
+        </div>
+        <div class="brand">
+            <h1 style="margin: 0; color: #007bff; font-size: 28px;">SecureAuth</h1>
+        </div>
+        <h2 style="text-align: center; margin-top: 0;">OTP Verification</h2>
+        
+        <div id="step1">
+            <h3>Step 1: Enter Email</h3>
+            <input type="email" id="email" placeholder="Enter your email address" required />
+            <button onclick="sendOTP()">Send OTP</button>
+        </div>
+        
+        <div id="step2" style="display: none;">
+            <h3>Step 2: Verify OTP</h3>
+            <input type="text" id="otp" placeholder="Enter 6-digit OTP" maxlength="6" />
+            <button onclick="verifyOTP()">Verify OTP</button>
+            <button onclick="resendOTP()" style="background: #6c757d; margin-top: 10px;">Resend OTP</button>
+        </div>
+        
+        <div id="status"></div>
+        
+        <div id="timer" style="text-align: center; margin-top: 15px; color: #666;"></div>
+    </div>
+
+    <script>
+        // Initialize EmailJS
+        emailjs.init("--NpbF0cNKxY7V5zU");
+        
+        let generatedOTP;
+        let otpExpiryTime;
+        let timerInterval;
+        let userEmail;
+
+        function generateOTP() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="${type}">${message}</div>`;
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                const timeLeft = otpExpiryTime - Date.now();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('timer').innerHTML = '<span style="color: red;">OTP Expired</span>';
+                    return;
+                }
+                
+                const minutes = Math.floor(timeLeft / 60000);
+                const seconds = Math.floor((timeLeft % 60000) / 1000);
+                document.getElementById('timer').innerHTML = `⏰ Expires in: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        async function sendOTP() {
+            const email = document.getElementById("email").value.trim();
+            
+            if (!email) {
+                showStatus("Please enter a valid email address", "error");
+                return;
+            }
+
+            userEmail = email;
+            generatedOTP = generateOTP();
+            otpExpiryTime = Date.now() + 15 * 60 * 1000; // 15 minutes
+            
+            const expiryTime = new Date(otpExpiryTime).toLocaleTimeString();
+            
+            showStatus("Sending OTP...", "info");
+
+            try {
+                const result = await emailjs.send(
+                    "service_zmo1m6e",
+                    "template_3d90j8f",
+                    {
+                        email: email,
+                        otp_code: generatedOTP,
+                        passcode: generatedOTP,
+                        time: expiryTime
+                    }
+                );
+
+                console.log("✅ OTP sent successfully:", generatedOTP);
+                showStatus(`OTP sent to ${email}! Check your inbox.`, "success");
+                
+                // Switch to verification step
+                document.getElementById('step1').style.display = 'none';
+                document.getElementById('step2').style.display = 'block';
+                
+                startTimer();
+                
+            } catch (error) {
+                console.error("❌ Failed to send OTP:", error);
+                showStatus("Failed to send OTP. Please try again.", "error");
+            }
+        }
+
+        function verifyOTP() {
+            const userOTP = document.getElementById("otp").value.trim();
+
+            if (!userOTP) {
+                showStatus("Please enter the OTP", "error");
+                return;
+            }
+
+            if (Date.now() > otpExpiryTime) {
+                showStatus("OTP has expired. Please request a new one.", "error");
+                return;
+            }
+
+            if (userOTP === generatedOTP) {
+                clearInterval(timerInterval);
+                showStatus("✅ OTP Verified Successfully! You are now authenticated.", "success");
+                
+                // Reset form after 3 seconds
+                setTimeout(() => {
+                    resetForm();
+                }, 3000);
+                
+            } else {
+                showStatus("❌ Invalid OTP. Please check and try again.", "error");
+            }
+        }
+
+        async function resendOTP() {
+            showStatus("Resending OTP...", "info");
+            await sendOTP();
+        }
+
+        function resetForm() {
+            document.getElementById('step1').style.display = 'block';
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('email').value = '';
+            document.getElementById('otp').value = '';
+            document.getElementById('status').innerHTML = '';
+            document.getElementById('timer').innerHTML = '';
+            clearInterval(timerInterval);
+        }
+
+        // Auto-focus on OTP input when step 2 is shown
+        const observer = new MutationObserver(() => {
+            if (document.getElementById('step2').style.display !== 'none') {
+                document.getElementById('otp').focus();
+            }
+        });
+        observer.observe(document.getElementById('step2'), { attributes: true });
+    </script>
+</body>
+</html>

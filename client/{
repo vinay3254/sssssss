@@ -1,0 +1,13 @@
+[eval]:1
+const esbuild = require(./node_modules/esbuild); esbuild.transform("
+                        ^
+Expression expected
+
+SyntaxError: Unexpected token '.'
+    at makeContextifyScript (node:internal/vm:194:14)
+    at compileScript (node:internal/process/execution:388:10)
+    at evalTypeScript (node:internal/process/execution:260:22)
+    at node:internal/main/eval_string:71:3
+
+Node.js v25.2.1
+Issue around line 2200 - 2205
