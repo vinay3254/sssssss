@@ -38,6 +38,7 @@ import ThesaurusModal from '../components/ThesaurusModal';
 import SpellCheckModal from '../components/SpellCheckModal';
 import RenameModal from '../components/RenameModal';
 import PrintDialog from '../components/PrintDialog';
+import OnlineImageModal from '../components/OnlineImageModal';
 import { exportToJSON, exportPresentation, generateSamplePresentation } from '../utils/exportUtils';
 import { handleFileImport } from '../utils/importUtils';
 import { checkSpelling } from '../utils/spellCheck';
@@ -85,7 +86,7 @@ const Dashboard = () => {
   const [selectedTableElement, setSelectedTableElement] = useState(null);
   const [selectedTableCells, setSelectedTableCells] = useState([]);
   const [activeRibbonTab, setActiveRibbonTab] = useState('File');
-
+  const [showImageUrlInput, setShowImageUrlInput] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
   // Font formatting controls for Recent section
@@ -293,6 +294,19 @@ const Dashboard = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
+
+  // Close image URL popup when clicking outside
+  useEffect(() => {
+    if (!showImageUrlInput) return;
+    const handleClick = (e) => {
+      if (!e.target.closest('[data-image-url-popup]')) {
+        setShowImageUrlInput(false);
+        setImageUrlValue('');
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [showImageUrlInput]);
 
   const handleNewPresentation = () => {
     if (confirm('Start a new presentation? Unsaved changes will be lost.')) {
@@ -934,452 +948,17 @@ const Dashboard = () => {
 
               <div className="h-8 w-px bg-gray-300 dark:bg-gray-600"></div>
 
-              {/* Recent Files with Font Controls */}
-              <div className="ai-style-change-1 flex items-center gap-1 flex-wrap">
-                {/* Recent Files Button */}
+              {/* Recent Files - no duplicated formatting buttons here */}
+              <div className="flex items-center gap-2">
                 <div>
                   <h4 className="text-[10px] font-medium text-gray-600 dark:text-gray-400 mb-1">Recent</h4>
-                  <button 
+                  <button
                     onClick={() => setShowRecentPresentations(true)}
                     className="text-[10px] text-blue-600 hover:underline"
                   >
                     View Recent Files
                   </button>
                 </div>
-
-                {/* Font Controls */}
-                <div className="flex flex-col gap-1 px-1 py-1 border-l border-gray-300 dark:border-gray-600">
-                  <div className="flex items-center gap-1">
-                    {/* Font Family Dropdown */}
-                    <div className="relative">
-                      <select
-                        value={fontFamily}
-                        onChange={(e) => handleFontFamilyChange(e.target.value)}
-                        className="w-20 px-1 py-0.5 text-[10px] border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-400 hover:border-blue-300"
-                        style={{ fontFamily: fontFamily }}
-                      >
-                        {fontFamilies.map((font) => (
-                          <option key={font} value={font} style={{ fontFamily: font }}>
-                            {font}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* Font Size Dropdown */}
-                    <div className="relative">
-                      <select
-                        value={fontSize}
-                        onChange={(e) => handleFontSizeChange(e.target.value)}
-                        className="w-10 px-1 py-0.5 text-[10px] border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-400 hover:border-blue-300"
-                      >
-                        {fontSizes.map((size) => (
-                          <option key={size} value={size}>
-                            {size}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* Case Controls */}
-                    <button
-                      onClick={handleUpperCase}
-                      className="w-6 h-6 flex items-center justify-center text-[10px] font-bold border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors"
-                      title="Convert to uppercase"
-                    >
-                      <span className="flex items-center gap-0.5">
-                        A
-                        <span className="text-[8px]">↑</span>
-                      </span>
-                    </button>
-
-                    <button
-                      onClick={handleLowerCase}
-                      className="w-6 h-6 flex items-center justify-center text-[10px] font-bold border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors"
-                      title="Convert to lowercase"
-                    >
-                      <span className="flex items-center gap-0.5">
-                        A
-                        <span className="text-[8px]">↓</span>
-                      </span>
-                    </button>
-                  </div>
-                  
-                  {/* Format Buttons Row */}
-                  <div className="flex items-center gap-0.5">
-                    <button
-                      onClick={toggleBold}
-                      className={`w-5 h-5 flex items-center justify-center text-[10px] font-bold border-0 rounded-sm transition-colors ${
-                        isBold 
-                          ? 'bg-blue-200 dark:bg-blue-600 text-blue-800 dark:text-white' 
-                          : 'bg-transparent hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300'
-                      }`}
-                      title="Bold (Ctrl+B)"
-                    >
-                      B
-                    </button>
-
-                    <button
-                      onClick={toggleItalic}
-                      className={`w-5 h-5 flex items-center justify-center text-[10px] font-bold italic border-0 rounded-sm transition-colors ${
-                        isItalic 
-                          ? 'bg-blue-200 dark:bg-blue-600 text-blue-800 dark:text-white' 
-                          : 'bg-transparent hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300'
-                      }`}
-                      title="Italic (Ctrl+I)"
-                    >
-                      I
-                    </button>
-
-                    <button
-                      onClick={toggleUnderline}
-                      className={`w-5 h-5 flex items-center justify-center text-[10px] font-bold underline border-0 rounded-sm transition-colors ${
-                        isUnderline 
-                          ? 'bg-blue-200 dark:bg-blue-600 text-blue-800 dark:text-white' 
-                          : 'bg-transparent hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300'
-                      }`}
-                      title="Underline (Ctrl+U)"
-                    >
-                      U
-                    </button>
-
-                    <button
-                      onClick={toggleStrikethrough}
-                      className={`w-5 h-5 flex items-center justify-center text-[10px] font-bold line-through border-0 rounded-sm transition-colors ${
-                        isStrikethrough 
-                          ? 'bg-blue-200 dark:bg-blue-600 text-blue-800 dark:text-white' 
-                          : 'bg-transparent hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300'
-                      }`}
-                      title="Strikethrough (Ctrl+Shift+S)"
-                    >
-                      S
-                    </button>
-
-                    {/* Text Color Picker */}
-                    <div className="relative flex flex-col items-center">
-                      <div
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          const selection = window.getSelection();
-                          if (selection && selection.rangeCount > 0) {
-                            setSavedSelection(selection.getRangeAt(0));
-                          }
-                          setShowTextColorPicker(!showTextColorPicker);
-                          setShowHighlightColorPicker(false);
-                        }}
-                        className="w-7 h-7 border border-gray-300 dark:border-gray-600 rounded-sm hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer flex items-center justify-center"
-                        title="Text Color"
-                      >
-                        <span className="w-5 h-5 rounded-sm" style={{ background: 'linear-gradient(135deg, #000000 50%, #FFFFFF 50%)' }}></span>
-                      </div>
-                      <span className="text-[8px] text-gray-600 dark:text-gray-400 mt-0.5">Text</span>
-                      {showTextColorPicker && (
-                        <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg z-50 p-3">
-                          {/* Theme Colors */}
-                          <div className="mb-3">
-                            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Theme Colors</div>
-                            <div className="grid grid-cols-6 gap-1">
-                              {themeTextColors.flat().map((color, idx) => (
-                                <div
-                                  key={idx}
-                                  onMouseDown={(e) => {
-                                    e.preventDefault();
-                                    if (savedSelection) {
-                                      const selection = window.getSelection();
-                                      selection.removeAllRanges();
-                                      selection.addRange(savedSelection);
-                                    }
-                                    handleTextColor(color);
-                                    setShowTextColorPicker(false);
-                                  }}
-                                  className="w-5 h-5 rounded-sm border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform cursor-pointer"
-                                  style={{ backgroundColor: color }}
-                                  title={color}
-                                />
-                              ))}
-                            </div>
-                          </div>
-                          {/* Standard Colors */}
-                          <div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Standard Colors</div>
-                            <div className="grid grid-cols-6 gap-1">
-                              {standardTextColors.map((color, idx) => (
-                                <div
-                                  key={idx}
-                                  onMouseDown={(e) => {
-                                    e.preventDefault();
-                                    if (savedSelection) {
-                                      const selection = window.getSelection();
-                                      selection.removeAllRanges();
-                                      selection.addRange(savedSelection);
-                                    }
-                                    handleTextColor(color);
-                                    setShowTextColorPicker(false);
-                                  }}
-                                  className="w-5 h-5 rounded-sm border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform cursor-pointer"
-                                  style={{ backgroundColor: color }}
-                                  title={color}
-                                />
-                              ))}
-                            </div>
-                          </div>
-                          {/* Custom Color */}
-                          <div className="mt-3 pt-2 border-t border-gray-200 dark:border-gray-600">
-                            <div className="flex items-center gap-2">
-                              <input
-                                type="color"
-                                onChange={(e) => {
-                                  if (savedSelection) {
-                                    const selection = window.getSelection();
-                                    selection.removeAllRanges();
-                                    selection.addRange(savedSelection);
-                                  }
-                                  handleTextColor(e.target.value);
-                                }}
-                                className="w-8 h-8 border-0 rounded-sm cursor-pointer"
-                              />
-                              <span className="text-xs text-gray-500 dark:text-gray-400">More Colors...</span>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Highlight Color Picker */}
-                    <div className="relative flex flex-col items-center">
-                      <div
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          const selection = window.getSelection();
-                          if (selection && selection.rangeCount > 0) {
-                            setSavedSelection(selection.getRangeAt(0));
-                          }
-                          setShowHighlightColorPicker(!showHighlightColorPicker);
-                          setShowTextColorPicker(false);
-                        }}
-                        className="w-7 h-7 border border-gray-300 dark:border-gray-600 rounded-sm hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer flex items-center justify-center"
-                        title="Highlight Color"
-                      >
-                        <span className="w-5 h-5 rounded-sm" style={{backgroundColor: '#fde047'}}></span>
-                      </div>
-                      <span className="text-[8px] text-gray-600 dark:text-gray-400 mt-0.5">Highlight</span>
-                      {showHighlightColorPicker && (
-                        <div className="absolute top-full left-0 mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg z-50 p-3 max-w-xs">
-                          {/* No Highlight Option */}
-                          <div className="mb-3">
-                            <button
-                              onClick={() => {
-                                if (savedSelection) {
-                                  const selection = window.getSelection();
-                                  selection.removeAllRanges();
-                                  selection.addRange(savedSelection);
-                                }
-                                handleHighlightColor('transparent');
-                                setShowHighlightColorPicker(false);
-                              }}
-                              className="w-full px-3 py-1.5 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-600 rounded text-gray-700 dark:text-gray-300"
-                            >
-                              No Highlight
-                            </button>
-                          </div>
-                          {/* Theme Colors */}
-                          <div className="mb-3">
-                            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Theme Colors</div>
-                            <div className="grid grid-cols-6 gap-1">
-                              {themeHighlightColors.flat().map((color, idx) => (
-                                <div
-                                  key={idx}
-                                  onMouseDown={(e) => {
-                                    e.preventDefault();
-                                    if (savedSelection) {
-                                      const selection = window.getSelection();
-                                      selection.removeAllRanges();
-                                      selection.addRange(savedSelection);
-                                    }
-                                    handleHighlightColor(color);
-                                    setShowHighlightColorPicker(false);
-                                  }}
-                                  className="w-5 h-5 rounded-sm border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform cursor-pointer"
-                                  style={{ backgroundColor: color }}
-                                  title={color}
-                                />
-                              ))}
-                            </div>
-                          </div>
-                          {/* Standard Colors */}
-                          <div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Standard Colors</div>
-                            <div className="grid grid-cols-6 gap-1">
-                              {standardHighlightColors.map((color, idx) => (
-                                <div
-                                  key={idx}
-                                  onMouseDown={(e) => {
-                                    e.preventDefault();
-                                    if (savedSelection) {
-                                      const selection = window.getSelection();
-                                      selection.removeAllRanges();
-                                      selection.addRange(savedSelection);
-                                    }
-                                    handleHighlightColor(color);
-                                    setShowHighlightColorPicker(false);
-                                  }}
-                                  className="w-5 h-5 rounded-sm border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform cursor-pointer"
-                                  style={{ backgroundColor: color }}
-                                  title={color}
-                                />
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Lists and Alignment Controls */}
-                <div className="flex flex-col gap-1 px-1 py-1 border-l border-gray-300 dark:border-gray-600">
-                  {/* Lists Dropdown */}
-                  <div className="relative">
-                    <button
-                      onClick={() => {
-                        // Save selection before opening dropdown
-                        const selection = window.getSelection();
-                        if (selection && selection.rangeCount > 0 && selection.toString().length > 0) {
-                          setSavedSelection(selection.getRangeAt(0));
-                        }
-                        setShowListDropdown(!showListDropdown);
-                      }}
-                      disabled={!hasTextSelection}
-                      className={`w-14 px-1 py-0.5 text-[10px] border border-gray-300 dark:border-gray-600 rounded-sm focus:outline-none focus:ring-1 focus:ring-blue-300 flex items-center justify-between ${
-                        !hasTextSelection 
-                          ? 'opacity-50 cursor-not-allowed bg-gray-100 dark:bg-gray-600' 
-                          : 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:border-blue-300'
-                      }`}
-                      title={hasTextSelection ? "List Style" : "Select text to apply list formatting"}
-                    >
-                      <span>{listTypes.find(t => t.value === selectedList)?.icon}</span>
-                      <span className="text-[8px]">▼</span>
-                    </button>
-                    {showListDropdown && (
-                      <div className="absolute top-full left-0 mt-1 w-32 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-sm shadow-lg z-10">
-                        {listTypes.map((type) => (
-                          <button
-                            key={type.value}
-                            onClick={() => handleListChange(type.value)}
-                            className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 flex items-center gap-2"
-                          >
-                            <span>{type.icon}</span>
-                            <span className="text-xs">{type.label.split(' ')[1]}</span>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Alignment Buttons */}
-                  <div className="flex items-center gap-0.5">
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        // Save selection before applying formatting
-                        const selection = window.getSelection();
-                        if (selection && selection.rangeCount > 0 && selection.toString().length > 0) {
-                          setSavedSelection(selection.getRangeAt(0));
-                        }
-                        handleAlignmentChange('left');
-                      }}
-                      disabled={!hasTextSelection}
-                      className={`w-5 h-5 flex items-center justify-center text-[10px] border border-gray-300 dark:border-gray-600 rounded-sm transition-colors ${
-                        !hasTextSelection
-                          ? 'opacity-40 cursor-not-allowed'
-                          : alignment === 'left'
-                            ? 'bg-blue-200 dark:bg-blue-600 text-blue-800 dark:text-white border-blue-400'
-                            : 'bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300'
-                      }`}
-                      title={hasTextSelection ? "Align Left (Ctrl+L)" : "Select text to apply alignment"}
-                    >
-                      <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
-                        <path d="M2 3h12v1H2V3zm0 3h8v1H2V6zm0 3h12v1H2V9zm0 3h8v1H2v-1z"/>
-                      </svg>
-                    </button>
-
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        // Save selection before applying formatting
-                        const selection = window.getSelection();
-                        if (selection && selection.rangeCount > 0 && selection.toString().length > 0) {
-                          setSavedSelection(selection.getRangeAt(0));
-                        }
-                        handleAlignmentChange('center');
-                      }}
-                      disabled={!hasTextSelection}
-                      className={`w-7 h-7 flex items-center justify-center text-sm border border-gray-300 dark:border-gray-600 rounded-sm transition-colors ${
-                        !hasTextSelection
-                          ? 'opacity-40 cursor-not-allowed'
-                          : alignment === 'center'
-                            ? 'bg-blue-200 dark:bg-blue-600 text-blue-800 dark:text-white border-blue-400'
-                            : 'bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300'
-                      }`}
-                      title={hasTextSelection ? "Align Center (Ctrl+E)" : "Select text to apply alignment"}
-                    >
-                      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-                        <path d="M2 3h12v1H2V3zm2 3h8v1H4V6zm-2 3h12v1H2V9zm2 3h8v1H4v-1z"/>
-                      </svg>
-                    </button>
-
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        // Save selection before applying formatting
-                        const selection = window.getSelection();
-                        if (selection && selection.rangeCount > 0 && selection.toString().length > 0) {
-                          setSavedSelection(selection.getRangeAt(0));
-                        }
-                        handleAlignmentChange('right');
-                      }}
-                      disabled={!hasTextSelection}
-                      className={`w-7 h-7 flex items-center justify-center text-sm border border-gray-300 dark:border-gray-600 rounded-sm transition-colors ${
-                        !hasTextSelection
-                          ? 'opacity-40 cursor-not-allowed'
-                          : alignment === 'right'
-                            ? 'bg-blue-200 dark:bg-blue-600 text-blue-800 dark:text-white border-blue-400'
-                            : 'bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300'
-                      }`}
-                      title={hasTextSelection ? "Align Right (Ctrl+R)" : "Select text to apply alignment"}
-                    >
-                      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-                        <path d="M2 3h12v1H2V3zm4 3h8v1H6V6zm-4 3h12v1H2V9zm4 3h8v1H6v-1z"/>
-                      </svg>
-                    </button>
-
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        // Save selection before applying formatting
-                        const selection = window.getSelection();
-                        if (selection && selection.rangeCount > 0 && selection.toString().length > 0) {
-                          setSavedSelection(selection.getRangeAt(0));
-                        }
-                        handleAlignmentChange('justify');
-                      }}
-                      disabled={!hasTextSelection}
-                      className={`w-7 h-7 flex items-center justify-center text-sm border border-gray-300 dark:border-gray-600 rounded-sm transition-colors ${
-                        !hasTextSelection
-                          ? 'opacity-40 cursor-not-allowed'
-                          : alignment === 'justify'
-                            ? 'bg-blue-200 dark:bg-blue-600 text-blue-800 dark:text-white border-blue-400'
-                            : 'bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300'
-                      }`}
-                      title={hasTextSelection ? "Justify (Ctrl+J)" : "Select text to apply alignment"}
-                    >
-                      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-                        <path d="M2 3h12v1H2V3zm0 3h12v1H2V6zm0 3h12v1H2V9zm0 3h12v1H2v-1z"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-
               </div>
             </div>
           )}
@@ -1584,15 +1163,13 @@ const Dashboard = () => {
                     <RiImageLine className="w-6 h-6 mb-1" />
                     Pictures
                   </button>
-                  <button onClick={() => {
-                    const url = prompt('Online Image URL:');
-                    if (url) {
-                      const el = { id: Date.now(), type: 'image', src: url, x: 120, y: 140, width: 300, height: 200, alt: 'Image' };
-                      const elems = slides[currentSlide]?.elements || [];
-                      updateSlide(currentSlide, { elements: [...elems, el] });
-                    }
-                  }} className="flex flex-col items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-xs">
-                    <svg className="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" /></svg>
+                  <button
+                    onClick={() => setShowImageUrlInput(true)}
+                    className="flex flex-col items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-xs"
+                  >
+                    <svg className="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
+                    </svg>
                     Online
                   </button>
                 </div>
@@ -2927,6 +2504,24 @@ const Dashboard = () => {
         currentName={presentationMeta.title || 'Untitled'}
         onRename={renamePresentation}
       />
+
+      {/* Online Image Modal */}
+      {showImageUrlInput && (
+        <OnlineImageModal
+          onClose={() => setShowImageUrlInput(false)}
+          onInsert={(url, alt) => {
+            const el = {
+              id: Date.now(),
+              type: 'image',
+              src: url,
+              x: 120, y: 140, width: 300, height: 200,
+              alt: alt || 'Online Image'
+            };
+            const elems = slides[currentSlide]?.elements || [];
+            updateSlide(currentSlide, { elements: [...elems, el] });
+          }}
+        />
+      )}
 
       {/* Slide Sorter Modal */}
       {showSlideSorter && (
